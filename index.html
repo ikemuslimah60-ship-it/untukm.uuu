@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday Zaaa! 🎂🧸🤍</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Sacramento&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(circle, #ffe5ec 0%, #ffc2d1 60%, #e8aeef 100%);
+      overflow-x: hidden;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .font-cute { font-family: 'Fredoka', cursive; }
+    .font-romantic { font-family: 'Sacramento', cursive; }
+   
+    .card-container {
+      width: 90%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(255, 105, 180, 0.3);
+      border: 4px solid #ffccd5;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      margin: 20px auto;
+      box-sizing: border-box;
+    }
+   
+    .page { display: none; }
+    .page-active { display: block; }
+   
+    .btn-pink {
+      background: linear-gradient(to right, #ff85a1, #ff99ac, #ff5c8a);
+      color: white;
+      border: none;
+      padding: 12px 32px;
+      font-size: 16px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(255, 92, 138, 0.4);
+      transition: all 0.2s ease;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn-pink:hover { transform: scale(1.05); filter: brightness(1.05); }
+    .btn-pink:active { transform: scale(0.95); }
+   
+    .polaroid {
+      background: white;
+      padding: 14px 14px 24px 14px;
+      box-shadow: 0 10px 25px rgba(255, 105, 180, 0.3);
+      transform: rotate(-2deg);
+      border-radius: 16px;
+      margin: 15px auto;
+      max-width: 250px;
+      position: relative;
+      transition: all 0.3s ease;
+    }
+    .polaroid:hover { transform: rotate(0deg) scale(1.04); }
+    .polaroid img { width: 100%; height: auto; border-radius: 8px; object-fit: cover; }
+   
+    .tag-polaroid {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #ffe5ec;
+      color: #ff477e;
+      padding: 2px 12px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: bold;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+
+    .audio-player {
+      background: rgba(255, 240, 243, 0.9);
+      border-radius: 16px;
+      padding: 12px;
+      border: 1px solid #ffccd5;
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .calendar-box { background: white; border: 2px solid #ffe5ec; border-radius: 16px; padding: 12px; margin-bottom: 15px; }
+    .calendar-grid { display: grid; grid-template-cols: repeat(7, 1fr); gap: 4px; font-size: 11px; margin-top: 8px; }
+    .day-name { color: #ff477e; font-weight: bold; }
+    .special-day {
+      background: linear-gradient(to bottom right, #ff85a1, #ff5c8a);
+      color: white;
+      border-radius: 50%;
+      font-weight: bold;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3px;
+    }
+
+    .custom-scroll::-webkit-scrollbar { width: 6px; }
+    .custom-scroll::-webkit-scrollbar-track { background: #ffe5ec; border-radius: 10px; }
+    .custom-scroll::-webkit-scrollbar-thumb { background: #ff85a1; border-radius: 10px; }
+
+    .gift-grid { display: grid; grid-template-cols: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+    .gift-box { background: #ffe5ec; border: 2px solid #ffb3c1; border-radius: 16px; padding: 15px 0; font-size: 32px; cursor: pointer; transition: all 0.2s; }
+    .gift-box:hover { background: #ffdee2; transform: scale(1.05); }
+
+    .game-area { width: 100%; height: 160px; background: rgba(255, 240, 243, 0.5); border: 2px dashed #ffb3c1; border-radius: 16px; position: relative; overflow: hidden; margin-bottom: 15px; }
+    #run-bear { position: absolute; font-size: 36px; cursor: pointer; transition: all 0.15s ease; top: 40%; left: 40%; }
+
+    .floating-emoji { position: absolute; user-select: none; pointer-events: none; animation: floatUp 6s ease-in-out infinite; }
+    @keyframes floatUp {
+      0% { transform: translateY(105vh) scale(0.6) rotate(0deg); opacity: 0.9; }
+      50% { transform: translateY(50vh) scale(1.2) rotate(15deg); }
+      100% { transform: translateY(-10vh) scale(0.8) rotate(-15deg); opacity: 0; }
+    }
+    .bounce-btn { animation: bounceGemes 1.5s infinite; }
+    @keyframes bounceGemes { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+   
+    .click-sparkle { position: absolute; pointer-events: none; animation: sparkleFade 0.8s ease-out forwards; font-size: 24px; }
+    @keyframes sparkleFade { 0% { transform: scale(0.5) translateY(0); opacity: 1; } 100% { transform: scale(1.5) translateY(-25px); opacity: 0; } }
+  </style>
+</head>
+<body onclick="spawnSparkle(event)">
+  <div id="emoji-container" style="position: fixed; inset: 0; pointer-events: none; z-index: 0;"></div>
+ 
+  <div class="card-container">
+   
+    <!-- HALAMAN 1: PASSWORD & PENYAMBUTAN -->
+    <div id="page-1" class="page page-active">
+      <div style="font-size: 60px; margin-bottom: 10px;" class="bounce-btn">🧸</div>
+      <h1 class="font-romantic text-pink-500" style="font-size: 46px; margin: 0 0 5px 0; font-weight: bold;">Happy Birthday!</h1>
+      <p class="font-cute text-pink-600" style="margin: 0 0 10px 0;">🧸 ⊂(·o·)⊃ 💕</p>
+      <p class="font-cute text-gray-600" style="font-size: 14px; margin-bottom: 15px;">Masukkan PIN Rahasia Buat Buka Kejutan 🗝️✨</p>
+     
+      <!-- Input Password PIN -->
+      <div style="margin-bottom: 20px;">
+        <input type="password" id="passInput" placeholder="Masukkan PIN (4 angka)" maxlength="4" style="text-align: center; font-size: 18px; padding: 10px; border-radius: 20px; border: 2px solid #ffb3c1; outline: none; width: 70%;" class="font-cute">
+        <p id="errorMsg" class="font-cute text-pink-600" style="font-size: 12px; margin-top: 8px; display: none;">Opps, PIN salah! Coba tanggal ultahmu 😉</p>
+      </div>
+
+      <button onclick="checkPassword()" class="btn-pink font-cute bounce-btn">Masuk Kejutan! 🧸🩷</button>
+    </div>
+
+    <!-- HALAMAN 2: FOTO & KALENDER -->
+    <div id="page-2" class="page" style="max-height: 80vh; overflow-y: auto; padding-right: 4px;">
+      <h2 class="font-romantic text-pink-600" style="font-size: 38px; margin: 0;">Dari Nanadd buat Zaaa 🤍</h2>
+      <p class="font-cute text-pink-500" style="font-size: 12px; margin: 0 0 15px 0;">ʕ•ᴥ•ʔ⊃❤️ Hugs & Love for You! 🧸</p>
+     
+      <div class="polaroid" onclick="triggerConfetti()">
+        <span class="tag-polaroid font-cute">🧸 Photo Memories 🎀</span>
+        <img src="nad.png" alt="Foto Kenangan Zaaa" onerror="this.onerror=null; this.src='nad.jpg';">
+        <p class="font-cute" style="font-size: 11px; color: #ff85a1; margin-top: 8px;">Ini foto Nanadd yang bakal selalu nemenin & dukung kamu 🤍🧸</p>
+      </div>
+
+      <!-- Pemutar Musik -->
+      <div class="audio-player">
+        <div style="display: flex; align-items: center; gap: 10px; width: 100%; text-align: left;">
+          <div style="font-size: 24px;">🎵</div>
+          <div style="flex: 1; min-width: 0;">
+            <p class="font-cute text-pink-600" style="font-size: 13px; margin: 0; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Special Backsound for Zaaa 🎈</p>
+            <p class="font-cute text-gray-600" style="font-size: 10px; margin: 0;">From Nanadd With Love 🤍</p>
+          </div>
+        </div>
+        <audio id="birthday-audio" src="SnapTik.Net_7500103346032823607.mp3" preload="auto" loop></audio>
+        <button id="play-btn" onclick="toggleAudio()" class="btn-pink font-cute" style="font-size: 11px; padding: 6px 16px; margin-top: 10px;">▶️ Putar Musik</button>
+      </div>
+
+      <!-- Kalender Aesthetic 9 Nov 2026 -->
+      <div class="calendar-box">
+        <div class="font-cute text-pink-500" style="font-size: 13px; font-weight: bold; display: flex; justify-content: space-between;">
+          <span>November 2026</span><span>🧸✨</span>
+        </div>
+        <div class="calendar-grid font-cute">
+          <span class="day-name">Min</span><span class="day-name">Sen</span><span class="day-name">Sel</span><span class="day-name">Rab</span><span class="day-name">Kam</span><span class="day-name">Jum</span><span class="day-name">Sab</span>
+          <span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span>
+          <span>8</span><span class="special-day animate-pulse">9 🤍</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span>
+          <span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span>
+          <span>22</span><span>23</span><span>24</span><span>25</span><span>26</span><span>27</span><span>28</span>
+          <span>29</span><span>30</span>
+        </div>
+      </div>
+
+      <button onclick="nextPage(3)" class="btn-pink font-cute" style="font-size: 13px; padding: 10px 24px;">Lanjut Baca Pesan 💌🧸</button>
+    </div>
+
+    <!-- HALAMAN 3: PESAN SURAT UTAMA -->
+    <div id="page-3" class="page">
+      <h2 class="font-cute text-pink-500" style="font-size: 22px; font-weight: bold; margin-bottom: 4px;">Pesan Spesial Buat Kamu 💌</h2>
+      <p class="font-cute text-pink-400" style="font-size: 12px; margin-bottom: 12px;">ฅʕ•̫͡•ʔฅ Baca pelan-pelan yaa 🤍</p>
+     
+      <div class="custom-scroll" style="background: rgba(255, 245, 246, 0.95); border: 2px solid #ffccd5; border-radius: 16px; padding: 14px; text-align: left; max-height: 250px; overflow-y: auto; font-size: 13px; line-height: 1.6; color: #4a4a4a; margin-bottom: 12px;">
+        <p style="margin-bottom: 10px;">Happy 15 tahun yaa, wishing you all best dalam segala hal yaa sayang, aku bangga sama kamu dalam hal apapun itu, apalagi sekarang kamu ketua osis kan? pasti bakalan sibuk banget, cmangattt yaa, aku ngga ngebatesin kamu buat interaksi sama siapapun itu asal kmu tau batasan yaa zaa.</p>
+       
+        <p style="margin-bottom: 10px;">skalii lagi aku bangga atas semua pencapaianmu slama ini, makasii uda bertahan sama aku selama ini, kita hampir 3 tahun lohh tpi yaa gitu meskipun hubungannya masii gajelas wkwk, aku bakal nemeninn semua prosess kamu asal kamu tetep sama aku mwhehehe.</p>
+       
+        <p style="margin-bottom: 10px;">tetepp sama aku yaa zaa? dan smoga kamu juga menginginkan hal yang sama. jujurr dalam hal apapun yaa? kalo kamu bosen yang diganti suasananya bukan orangnya.</p>
+       
+        <p style="margin-bottom: 10px;">jujurr yaa aku ini emang gengsiann orangnya mwehehe jadi kamu kalo bisa harus inisiatif yaa, aku gatauu kamu disanaa gimana yang jelas aku percaya sama kamu, tolong jangan ngecewain aku ya? aku uda sepercaya itu sama kamu, truss kloo sampee kmu ngecewain aku aku gabakal segan segan buat pergi, aku sayang kamu tapi aku juga sayang sama diriku sendiri.</p>
+       
+        <p style="margin-bottom: 10px;">banyak yang bisa gantiin aku za tapi yang kaya aku cumann aku, dan smoga tempat pulangmu itu tetepp aku ya? dan smoga kmu bukan cwoo yg cintanya dari 100 ke 0 yaa sayang?</p>
+       
+        <p style="margin-bottom: 10px;">smoga semua mimpi kamu tercapai yaa zaa, slalu jadi kebanggaan ortu juga, sehat sehat, panjang umur juga, dan smoga yang disemogakan tersemogakan yaa sayang.</p>
+       
+        <div style="text-align: right; border-top: 1px solid #ffccd5; padding-top: 10px; margin-top: 10px;" class="font-romantic text-pink-600" style="font-size: 26px;">
+          Dear Zaa,<br>From Nadadd 🤍 🧸
+        </div>
+      </div>
+
+      <button onclick="nextPage(4)" class="btn-pink font-cute" style="font-size: 13px; padding: 10px 24px;">Lanjut ke Game Seru! 🎮🧸</button>
+    </div>
+
+    <!-- HALAMAN 4: MINI GAME (KADO & TANGKAP BERUANG) -->
+    <div id="page-4" class="page">
+      <h2 class="font-romantic text-pink-600" style="font-size: 34px; margin: 0;">Mini Games 🎁🧸</h2>
+      <p class="font-cute text-gray-600" style="font-size: 12px; margin-bottom: 10px;">1. Pilih salah satu kado dulu ya!</p>
+     
+      <div class="gift-grid">
+        <div onclick="openGift(1, this)" class="gift-box">🎁</div>
+        <div onclick="openGift(2, this)" class="gift-box">🎁</div>
+        <div onclick="openGift(3, this)" class="gift-box">🎁</div>
+      </div>
+      <p id="gift-result" class="font-cute text-pink-600" style="font-size: 12px; min-height: 20px; font-weight: bold;"></p>
+
+      <div id="game2-section" style="display: none; margin-top: 15px;">
+        <p class="font-cute text-gray-600" style="font-size: 12px; margin-bottom: 5px;">2. Tangkap beruang yang lari ini 3x!</p>
+        <div class="font-cute text-pink-600" style="font-size: 13px; font-weight: bold; margin-bottom: 5px;">Skor: <span id="bear-score">0</span>/3</div>
+        <div class="game-area">
+          <div id="run-bear" onclick="hitBear()">🧸</div>
+        </div>
+      </div>
+
+      <button id="next-to-final" onclick="nextPage(5)" class="btn-pink font-cute" style="display: none; font-size: 13px; padding: 10px 24px;">Lanjut ke Puncak Kejutan! 🎂✨</button>
+    </div>
+
+    <!-- HALAMAN 5: TIUP LILIN & BALON -->
+    <div id="page-5" class="page">
+      <h2 class="font-cute text-pink-500" style="font-size: 24px; font-weight: bold; margin-bottom: 5px;">Tiup Lilin Ultahmu! 🎂</h2>
+      <p class="font-cute text-gray-600" style="font-size: 12px; margin-bottom: 15px;">Pencet kue buat tiup lilin & pecahin balonnya!</p>
+
+      <div onclick="blowCandle()" style="cursor: pointer; display: inline-block; margin-bottom: 15px;" class="transform hover:scale-110 transition">
+        <div id="candle-flame" style="font-size: 32px;" class="animate-bounce">🔥</div>
+        <div style="font-size: 64px;">🎂</div>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 15px; font-size: 32px; margin-bottom: 15px;">
+        <span onclick="popBalloon(this)" style="cursor: pointer;">🎈</span>
+        <span onclick="popBalloon(this)" style="cursor: pointer;">🧸</span>
+        <span onclick="popBalloon(this)" class="cursor-pointer">🎈</span>
+      </div>
+
+      <div id="final-message" class="hidden font-romantic text-pink-600 font-bold" style="font-size: 36px; margin-bottom: 15px;">
+        I Love You Zaa! 🤍✨
+      </div>
+
+      <button onclick="nextPage(1)" style="background: #eee; color: #555; border: none; padding: 8px 16px; border-radius: 20px; font-size: 12px; cursor: pointer;" class="font-cute">
+        🔄 Ulangi Dari Awal
+      </button>
+    </div>
+
+  </div>
+
+  <script>
+    let currentScore = 0;
+
+    function checkPassword() {
+      const input = document.getElementById('passInput').value;
+      if (input === "2909") {
+        document.getElementById('errorMsg').style.display = 'none';
+        nextPage(2);
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+      }
+    }
+
+    function nextPage(pageNumber) {
+      for(let i=1; i<=5; i++) {
+        document.getElementById(`page-${i}`).classList.remove('page-active');
+      }
+      document.getElementById(`page-${pageNumber}`).classList.add('page-active');
+     
+      if (pageNumber === 2) {
+        triggerConfetti();
+        startFloatingEmojis();
+        const audio = document.getElementById('birthday-audio');
+        audio.play().then(() => {
+          document.getElementById('play-btn').textContent = '⏸️ Jeda Musik';
+        }).catch(() => {});
+      } else if (pageNumber === 3 || pageNumber === 5) {
+        triggerConfetti();
+      } else if (pageNumber === 4) {
+        moveBear();
+      }
+    }
+
+    function toggleAudio() {
+      const audio = document.getElementById('birthday-audio');
+      const btn = document.getElementById('play-btn');
+      if (audio.paused) {
+        audio.play();
+        btn.textContent = '⏸️ Jeda Musik';
+      } else {
+        audio.pause();
+        btn.textContent = '▶️ Putar Musik';
+      }
+    }
+
+    function triggerConfetti() {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: ['#ff85a1', '#ffb3c1', '#ffc2d1', '#f72585'] });
+    }
+
+    function openGift(giftNum, element) {
+      const wishes = [
+        "🎉 Selamat! Kamu dapet voucher gratis peluk dari Nanadd!",
+        "✨ Yeay! Isi kadonya adalah pasokan kebahagiaan tak terbatas buat kamu!",
+        "🌸 Kotak ini isinya tumpukan keberuntungan untuk satu tahun ke depan!"
+      ];
+      document.getElementById('gift-result').textContent = wishes[giftNum - 1];
+      triggerConfetti();
+      document.getElementById('game2-section').style.display = 'block';
+    }
+
+    function moveBear() {
+      if (currentScore >= 3) return;
+      const bear = document.getElementById('run-bear');
+      const randomTop = Math.floor(Math.random() * 65) + 10;
+      const randomLeft = Math.floor(Math.random() * 70) + 10;
+      bear.style.top = `${randomTop}%`;
+      bear.style.left = `${randomLeft}%`;
+    }
+
+    function hitBear() {
+      currentScore++;
+      document.getElementById('bear-score').textContent = currentScore;
+      triggerConfetti();
+      if (currentScore >= 3) {
+        document.getElementById('run-bear').textContent = '🥳';
+        document.getElementById('next-to-final').style.display = 'inline-block';
+      } else {
+        moveBear();
+      }
+    }
+
+    function blowCandle() {
+      document.getElementById('candle-flame').innerText = '💨';
+      setTimeout(() => {
+        document.getElementById('candle-flame').style.opacity = '0';
+        document.getElementById('final-message').classList.remove('hidden');
+        confetti({ particleCount: 150, spread: 100 });
+      }, 300);
+    }
+
+    function popBalloon(element) {
+      element.style.transform = 'scale(1.4)';
+      element.style.opacity = '0';
+      setTimeout(() => element.remove(), 200);
+      confetti({ particleCount: 30 });
+    }
+
+    function spawnSparkle(e) {
+      const sparkles = ['✨', '💖', '🤍', '🌸', '🎀'];
+      const randomSparkle = sparkles[Math.floor(Math.random() * sparkles.length)];
+      const el = document.createElement('div');
+      el.className = 'click-sparkle';
+      el.textContent = randomSparkle;
+      el.style.left = `${e.clientX - 12}px`;
+      el.style.top = `${e.clientY - 12}px`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+
+    let emojiInterval;
+    function startFloatingEmojis() {
+      if (emojiInterval) clearInterval(emojiInterval);
+      const container = document.getElementById('emoji-container');
+      const emojis = ['🧸', '💖', '🤍', '✨', '🎀', '🎈'];
+      emojiInterval = setInterval(() => {
+        const el = document.createElement('div');
+        el.className = 'floating-emoji';
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+        el.style.left = `${Math.random() * 100}vw`;
+        el.style.animationDuration = `${4 + Math.random() * 4}s`;
+        el.style.fontSize = `${20 + Math.random() * 24}px`;
+        container.appendChild(el);
+        setTimeout(() => el.remove(), 7000);
+      }, 400);
+    }
+  </script>
+</body>
+</html>
